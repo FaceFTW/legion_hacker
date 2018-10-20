@@ -102,7 +102,7 @@ type "HACK #{target.upcase}"
 
 clear_lines
 cursor :line, 10
-puts "💀💀💀💀💀#{@red}#{'WARNING'.blink.bold}\e[0m 💀💀💀💀💀"
+puts "#{@red}#{'WARNING'.blink.bold}\e[0m"
 puts "#{@red} YOU ARE ABOUT TO HACK #{target}.#{@green}"
 print_kill '  Do you wish to continue?'
 
@@ -175,11 +175,11 @@ print decrypted.to_s.color(:rgb256_fg, '500')
 cursor :line, 14
 type 'UPLOAD VIRUS'
 clear_lines
-progress '💀💀💀💀 Uploading virus 💀💀💀💀', 'Virus installation successful.', @redbg
+progress ' Uploading Virus', 'Virus installation successful.', @redbg
 
 type 'INITIALIZE SELF-DESTRUCT SEQUENCE'
 clear_lines
-progress '💀💀💀💀  INITIALIZING SELF-DESTRUCT  💀💀💀💀', 'Self-destruction in progress.', @redbg
+progress '  INITIALIZING SELF-DESTRUCT  ', 'Self-destruction in progress.', @redbg
 
 matrix
 
