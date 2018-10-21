@@ -1,4 +1,3 @@
-
 $LOAD_PATH << '.'
 require 'string.rb'
 include EscSequence
@@ -12,6 +11,7 @@ def color_example
     @buffer.each do |line|
         break if line.match?(/ex2/)
         next unless line.match?(/^[^#]/)
+
         result = eval(line)
         print " #{code_color}#{line.chomp}"
         print "\n  #{result}\e[0m"

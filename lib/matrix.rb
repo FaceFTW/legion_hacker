@@ -1,4 +1,3 @@
-
 class Crawler
     attr_accessor :line, :line2, :visible
     @@hsv1 = [120, 1, 0.5]

@@ -1,4 +1,3 @@
-
 require 'fiddle'
 require 'fiddle/import'
 include Fiddle::CParser
