@@ -43,12 +43,12 @@ $ bundle install
 
 External Linux packages are needed for ```bundler``` to install the dependencies. If you get an error when running bundler, use this command on your distro:
 
-####Ubuntu/Debian/DPKG
+**Ubuntu/Debian/DPKG**
 ```clickhouse
 $ sudo apt-get install make gcc ruby-dev
 ```
 
-####Fedora 
+**Fedora** 
 ```clickhouse
 $ dnf install make gcc ruby-dev
 ```
@@ -57,7 +57,7 @@ OR
 $ yum install make gcc ruby-dev
 ```
 
-####Arch (btw I use arch lol)
+**Arch (btw I use arch lol)**
 ```clickhouse
-$ #Will update just lazy xD
+$ pacman -s make gcc ruby-dev
 ```
