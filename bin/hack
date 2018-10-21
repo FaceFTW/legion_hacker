@@ -14,6 +14,15 @@ font = Figlet::Font.new(root_path + 'data/fonts/big.flf')
 figlet = Figlet::Typesetter.new(font)
 prompt = TTY::Prompt.new
 
+# ---------------------
+# Banner Definitions
+# ---------------------
+print @green
+banner = figlet['LEGION  HACKER'] + "\n" * 5
+cia_banner = figlet['   C   I   A'] + "\n" * 5
+fbi_banner = figlet['   F   B   I'] + "\n" * 5
+nsa_banner = figlet['   N   S   A'] + "\n" * 5
+
 termcap = `stty -a <"$(tty)"`
 
 $lines = termcap.gsub(/.*?(rows)\s*(\d+).*/m, '\\2').to_i
@@ -30,73 +39,71 @@ $center_column = $columns / 2
 
 # Progress Bar Function Definition
 def progress(title, tail = '', on = color(:rgb256, '555', '030'))
-  puts
-  on.set_bold
-  off = color(:rgb256, '555', '000')
-  n = 50
-  str = title.center(n)
-  print "\r#{off}[#{str}]"
-  cursor :col, 2
-  print on
-  str.chars.each do |c|
-    print c
-    sleep 0.04
-  end
-  puts "\n#{@normal}#{tail.center(n + 2)}\n\n"
+    puts
+    on.set_bold
+    off = color(:rgb256, '555', '000')
+    n = 50
+    str = title.center(n)
+    print "\r#{off}[#{str}]"
+    cursor :col, 2
+    print on
+    str.chars.each do |c|
+        print c
+        sleep 0.04
+    end
+    puts "\n#{@normal}#{tail.center(n + 2)}\n\n"
 end
 
 # Random Text Function Definition
 def alien_language(n = 100)
-  (0..n).each do |line|
-    s = @alienlang.shuffle[0, $columns] * ''
-    pos = rand($lines - 8)
-    print "\e[#{pos};1H"
-    bright = (($lines - pos) / $lines.to_f)
-    gradient [160 + line, 0.3, bright], [320 - line, 1, 0], s
+    (0..n).each do |line|
+        s = @alienlang.shuffle[0, $columns] * ''
+        pos = rand($lines - 8)
+        print "\e[#{pos};1H"
+        bright = (($lines - pos) / $lines.to_f)
+        gradient [160 + line, 0.3, bright], [320 - line, 1, 0], s
 
-    posc = rand($columns)
-    bright = (($columns - posc) / $columns.to_f)
-    s = s[0, $lines - 4]
-    gradient_col [180 + line, 0.3, bright], [320 - line, 1, 0.0], s, posc
-    sleep 0.03
-  end
+        posc = rand($columns)
+        bright = (($columns - posc) / $columns.to_f)
+        s = s[0, $lines - 4]
+        gradient_col [180 + line, 0.3, bright], [320 - line, 1, 0.0], s, posc
+        sleep 0.03
+    end
 end
 
 def alien_gibberish(n)
-  @alienlang.shuffle[0, n] * ''
+    @alienlang.shuffle[0, n] * ''
 end
 
 # ASCII Gibberish Function Definition
 @ascii_gibberish = ('!'..'~').to_a << (0..10).to_a * 8
 
 def ascii_gibberish(n)
-  Array.new(n) {|_i| @ascii_gibberish.sample} * ''
+    Array.new(n) { |_i| @ascii_gibberish.sample } * ''
 end
 
 # Matrix Overlay Function Definition
 @matrix_gibberish = File.read(root_path + 'data/text/matrix_gibberish').chars
 
 def matrix_gibberish(n)
-  Array.new(n) {|_i| @matrix_gibberish.sample} * ''
+    Array.new(n) { |_i| @matrix_gibberish.sample } * ''
 end
 
 # Typing Animations
 def type(s, line = nil, sec = 0.06, wait = 0.9)
-  print "\e[#{line};0H" if line
-  print "#{@green}\r> \e[K"
-  print "\e]50;CursorShape=0\C-G"
-  sleep wait
-  s.chars.each {|c| print c; sleep sec}
-  puts "\e[0m\e]50;CursorShape=1\C-G"
+    print "\e[#{line};0H" if line
+    print "#{@green}\r> \e[K"
+    print "\e]50;CursorShape=0\C-G"
+    sleep wait
+    s.chars.each { |c| print c; sleep sec }
+    puts "\e[0m\e]50;CursorShape=1\C-G"
 end
 
 # Console Clearing Function Definition
 def clear_lines
-  console_kill_lines 10, 13
-  cursor :line, 10
+    console_kill_lines 10, 13
+    cursor :line, 10
 end
-
-
 
 # ---------------------
 # Menu Functions
@@ -104,91 +111,136 @@ end
 
 # Target Selection Menu
 def select_target
-  @targetnum = prompt.select('CHOOSE TARGET') do |menu|
-    menu.choice 'CIA', 1
-    menu.choice 'FBI', 2
-    menu.choice 'NSA', 3
-    menu.choice 'Too Lazy fam, not today', 4
-  end
+    @targetnum = prompt.select('CHOOSE TARGET') do |menu|
+        menu.choice 'CIA', 1
+        menu.choice 'FBI', 2
+        menu.choice 'NSA', 3
+        menu.choice 'Too Lazy fam, not today', 4
+    end
 
-  # Return Based on Target
-  case targetnum
+    # Return Based on Target
+    case targetnum
     when 1
-      return 'CIA'
+        return 'CIA'
     when 2
-      return 'FBI'
+        return 'FBI'
     when 3
-      return 'NSA'
+        return 'NSA'
     when 4
-      return 'exit'
-  end
+        return 'exit'
+    end
 end
 
 # Hack Confirmation
 def do_hack(chosentarget)
-  # Check if the user wants to exit
-  if chosentarget == 'exit'
-    exit 1
-  end
+    # Check if the user wants to exit
+    exit 1 if chosentarget == 'exit'
 
-  # Commence Hack
-  clear_lines
-  cursor :line, 10
-
-  # Ask if this target is correct
-  puts "#{@red}#{'WARNING'.blink.bold}\e[0m"
-  puts "#{@red} YOU ARE ABOUT TO HACK #{chosentarget}.#{@green}"
-
-  # If Yes
-  if prompt.yes?('Do you wish to continue?')
-    # Begin Hacking Target
+    # Commence Hack
     clear_lines
-    progress 'Hacking ' + target, "\e[1;05m#{@red}#{' RESTRICTED ACCESS ONLY '.center(50, '*')}\e[0m"
-    type 'CRACK PASSWORD && OVERRIDE ALL SECURITY', 14, 0.08, 0.2
-    sleep 0.25
+    cursor :line, 10
 
-    #Move to Next Step
-    select_hack chosentarget
+    # Ask if this target is correct
+    puts "#{@red}#{'WARNING'.blink.bold}\e[0m"
+    puts "#{@red} YOU ARE ABOUT TO HACK #{chosentarget}.#{@green}"
 
-  # If No
-  else
-    #Return to Select Target Menu
-    select_target
-  end
+    # If Yes
+    if prompt.yes?('Do you wish to continue?')
+        # Begin Hacking Target
+        clear_lines
+        progress 'Hacking ' + target, "\e[1;05m#{@red}#{' RESTRICTED ACCESS ONLY '.center(50, '*')}\e[0m"
+        type 'CRACK PASSWORD && OVERRIDE ALL SECURITY', 14, 0.08, 0.2
+        sleep 0.25
 
+        # Move to Next Step
+        select_hack chosentarget, false
+
+    # If No
+    else
+        # Return to Select Target Menu
+        select_target
+    end
 end
 
 # Hack Selection Screen
-def select_hack(chosentarget){
-     prompt.select('CHOOSE HACK')  do |menu|
-      menu.choice 'Scan and Download Records', 1
-      menu.choice ''
+def select_hack(_chosentarget, _recordsdownloaded)
+    # Pick your Poison
+    @hack = prompt.select('CHOOSE OPTION') do |hackmenu|
+        hackmenu.choice 'Scan and Download Records', 1
+        hackmenu.choice 'Analyze Downloaded Records', 2
+        hackmenu.choice 'Get Infrastructure Report', 3
+        hackmenu.choice 'Cause Service Disruption', 4
+        hackmenu.choice 'Perform Exploit', 5
+        hackmenu.choice 'Upload Malicious Software', 6
+        hackmenu.choice 'Delete Evidence', 7
+        hackmenu.choice 'Disconnect', 8
     end
-}
-end
-# ---------------------
-# Banner Definitions
-# ---------------------
-print @green
-banner = figlet['LEGION  HACKER'] + "\n" * 5
-cia_banner = figlet['   C   I   A'] + "\n" * 5
-fbi_banner = figlet['   F   B   I'] + "\n" * 5
-nsa_banner = figlet['   N   S   A'] + "\n" * 5
+    # Which one did you choose?
+    case @hack
+    when 1
 
+end
+end
+
+# ---------------------
+# Hack Methods
+# ---------------------
+
+# Scan and Download Records
+def get_records(isdownloaded)
+    # skeleton for no errors lol
+end
+
+# Analyze Records
+def analyze_records(isdownloaded)
+    # skeleton because spooktober
+end
+
+# Get Infrastructure Report
+def get_infrastructure(chosentarget)
+    # even more skeleton bois
+end
+
+# Cause Service Disruption
+def disrupt_infrastructure(chosentarget)
+    # spooky scary skeletons
+end
+
+# Perform Exploit
+def do_exploit
+    # running out of skeleton puns
+end
+
+# Upload Malicious Software
+def upload_malware
+    # this method needs some C A L C I U M
+end
+
+# Delete Evidence
+def remove_trace(chosentarget)
+    # the penultimate skeleton
+end
+
+# Disconnect
+def disconnect(chosentarget)
+    # Probably could be filled, but too lazy, so here's a skeleton
+end
+
+# Actual Code Runs Here
 screen :new
 print banner
 
 cursor :line, 10
 progress 'LOADING', 'READY'
 
-#Transferred all code to methods up to here
+# Transferred all code to methods up to here
 
 alien_language 20
 
-stra = (1..$lines).map {|i| EscSequence.line(i) << EscSequence.kill}
-cia_banner.split(/\n/).each.with_index {|s, i| stra[i] << s}
+stra = (1..$lines).map { |i| EscSequence.line(i) << EscSequence.kill }
+cia_banner.split(/\n/).each.with_index { |s, i| stra[i] << s }
 
-address = (0..3).map {|_i| rand(255)} * '.'
+address = (0..3).map { |_i| rand(255) } * '.'
 
 stra[10] << @green.to_s << 'ACCESS GRANTED'.center(50)
 stra[11] << @normal.to_s <<
@@ -197,8 +249,8 @@ stra[11] << @normal.to_s <<
 
 print @green
 stra.shuffle.each do |s|
-  print s
-  sleep 0.035
+    print s
+    sleep 0.035
 end
 
 cursor :line, 14
@@ -226,14 +278,14 @@ cursor :line, 10
 cursor :save
 
 181.times do |i|
-  s = matrix_gibberish(32) << ' ' * 8
-  cursor :restore
-  gradient [6 * i, 0.5, 1.0], [10 * i, 1.0, 1.0], s
-  len = (decrypted.length * (i / 180.0)).round
-  cursor :restore
-  print "\n\r\e[K"
-  print decrypted[0..len] << s[0] << "\e[7m \e[27m\n\r\e[K"
-  sleep 0.05
+    s = matrix_gibberish(32) << ' ' * 8
+    cursor :restore
+    gradient [6 * i, 0.5, 1.0], [10 * i, 1.0, 1.0], s
+    len = (decrypted.length * (i / 180.0)).round
+    cursor :restore
+    print "\n\r\e[K"
+    print decrypted[0..len] << s[0] << "\e[7m \e[27m\n\r\e[K"
+    sleep 0.05
 end
 
 cursor :line, 11
@@ -258,14 +310,14 @@ press_any_key = '  PRESS ANY KEY TO CONTINUE  '.center($columns, '#')
 linestart = $center_line - 2
 
 (0..255).each do |i|
-  print color :truecolor_fg, 0, i, 0
-  print hashes.at_line(linestart)
-  print hashes.at_line(linestart + 1)
-  print str.blink.at_pos(linestart + 1, ($columns - str.length) / 2 + 1)
-  print press_any_key.at_line(linestart + 2)
-  print hashes.at_line(linestart + 3)
-  print "\n\r"
-  sleep 0.002
+    print color :truecolor_fg, 0, i, 0
+    print hashes.at_line(linestart)
+    print hashes.at_line(linestart + 1)
+    print str.blink.at_pos(linestart + 1, ($columns - str.length) / 2 + 1)
+    print press_any_key.at_line(linestart + 2)
+    print hashes.at_line(linestart + 3)
+    print "\n\r"
+    sleep 0.002
 end
 
 sleep 5
