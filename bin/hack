@@ -175,11 +175,27 @@ def select_hack(_chosentarget, _recordsdownloaded)
         hackmenu.choice 'Delete Evidence', 7
         hackmenu.choice 'Disconnect', 8
     end
+
     # Which one did you choose?
     case @hack
     when 1
+        get_records _chosentarget, _recordsdownloaded
+    when 2
+        analyze_records _chosentarget, _recordsdownloaded
+    when 3
+        get_infrastructure _chosentarget, _recordsdownloaded
+    when 4
+        disrupt_infrastructure _chosentarget, _recordsdownloaded
+    when 5
+        do_exploit _chosentarget, _recordsdownloaded
+    when 6
+        upload_malware _chosentarget, _recordsdownloaded
+    when 7
+        remove_trace _chosentarget, _recordsdownloaded
+    when 8
+        disconnect _chosentarget
 
-end
+    end
 end
 
 # ---------------------
@@ -187,37 +203,61 @@ end
 # ---------------------
 
 # Scan and Download Records
-def get_records(isdownloaded)
-    # skeleton for no errors lol
+def get_records(chosentarget, isdownloaded)
+    # Generate a reasonably large random number
+    @numrecords = Random.rand(10_000...10_000_000)
+
+    # Scan the database
+    cursor :line, 14
+    type 'SCAN DATABASE && DOWNLOAD RECORDS'
+    clear_lines
+    progress 'Scanning database', "#{@numrecords} records found."
+
+    # Download the Records
+    cursor :up, 4
+    progress 'Downloading records', 'Download complete.'
+
+    # Update if previous records exist
+    progress 'Updating existing records', 'Update Complete' if isdownloaded
+
+    # Return to Hack Selection
+    select_hack chosentarget, isdownloaded
 end
 
 # Analyze Records
-def analyze_records(isdownloaded)
-    # skeleton because spooktober
+def analyze_records(chosentarget, isdownloaded)
+    # If records don't exist, how can we analyze them? ( ͡° ͜ʖ ͡°)
+    if isdownloaded
+        progress "Analyzing records from #{chosentarget}", "#{chosentarget} records analyzed"
+    else
+        type 'No records have been found', 14, 0.08, 0.2
+    end
+
+    select_hack chosentarget, isdownloaded
 end
 
 # Get Infrastructure Report
-def get_infrastructure(chosentarget)
+def get_infrastructure(chosentarget, isdownloaded)
     # even more skeleton bois
 end
 
 # Cause Service Disruption
-def disrupt_infrastructure(chosentarget)
+def disrupt_infrastructure(chosentarget, isdownloaded)
     # spooky scary skeletons
 end
 
 # Perform Exploit
-def do_exploit
+def do_exploit(chosentarget, isdownloaded)
     # running out of skeleton puns
 end
 
 # Upload Malicious Software
-def upload_malware
+def upload_malware(chosentarget, isdownloaded)
     # this method needs some C A L C I U M
 end
 
 # Delete Evidence
-def remove_trace(chosentarget)
+def remove_trace(chosentarget, isdownloaded)
     # the penultimate skeleton
 end
 
