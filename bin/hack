@@ -156,20 +156,20 @@ def do_hack(chosentarget)
         alien_language 20
 
         stra = (1..$lines).map { |i| EscSequence.line(i) << EscSequence.kill }
-        .split(/\n/).each.with_index { |s, i| stra[i] << s }
+                          .split(/\n/).each.with_index { |s, i| stra[i] << s }
 
-        #Create an fake IP Address
+        # Create an fake IP Address
         address = (0..3).map { |_i| rand(255) } * '.'
 
         stra[10] << @green.to_s << 'ACCESS GRANTED'.center(50)
         stra[11] << @normal.to_s <<
-		        "Connected to #{target} at #{address}".center(50) <<
-		        @green
+            "Connected to #{target} at #{address}".center(50) <<
+            @green
 
         print @green
         stra.shuffle.each do |s|
-	        print s
-	        sleep 0.035
+            print s
+            sleep 0.035
         end
         # Move to Next Step
         select_hack chosentarget, false, address
@@ -256,7 +256,7 @@ def analyze_records(chosentarget, isdownloaded, address)
 end
 
 # Get Infrastructure Report
-def get_infrastructure(chosentarget, isdownloaded, address)
+def get_infrastructure(_chosentarget, _isdownloaded, _address)
     # ---------------------
     # Get ready for funky math
     # ---------------------
@@ -305,7 +305,6 @@ cursor :line, 10
 progress 'LOADING', 'READY'
 
 # Transferred all code to methods up to here
-
 
 cursor :line, 14
 type 'SCAN DATABASE && DOWNLOAD RECORDS'
