@@ -8,27 +8,20 @@
 #include "colorspace.h"
 #include "util.h"
 
-inline int
-truecolor_print(Truecolor c)
-{
+inline int truecolor_print(Truecolor c){
 	return printf(truecolor_fmt, UNPACK_COLOR(c));
 }
 
-inline int
-truecolor_str(char *s, Truecolor c)
-{
+inline int truecolor_str(char *s, Truecolor c){
 	return sprintf(s, truecolor_fmt, UNPACK_COLOR(c));
 }
 
-void exit_cleanup(int signr)
-{
+void exit_cleanup(int signr){
     SCREEN_RESTORE
     exit(0);
 }
 
-int
-main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
 
     signal(SIGINT, exit_cleanup);
 

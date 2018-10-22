@@ -3,9 +3,7 @@
 
 Truecolor blend_hsv(HSV, HSV, float);
 
-inline Truecolor
-blend_hsv(HSV a, HSV b, float c)
-{
+inline Truecolor blend_hsv(HSV a, HSV b, float c){
 	HSV tmp;
 
 	for (int i = 0; i < 3; i++)

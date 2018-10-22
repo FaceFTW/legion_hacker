@@ -4,8 +4,7 @@
 #include "color.h"
 #include "colorspace.h"
 
-inline Truecolor
-fhsv2rgb(float h, float s, float v, uint32_t fg_bg) {
+inline Truecolor fhsv2rgb(float h, float s, float v, uint32_t fg_bg) {
     s = fmax(0.f, fmin(s, 1.f));
     v = fmax(0.f, fmin(v, 1.f)); 
     
@@ -38,25 +37,18 @@ fhsv2rgb(float h, float s, float v, uint32_t fg_bg) {
 	return rgb;
 }
 
-extern Truecolor
-hsv_to_rgb(float h, float s, float v, uint32_t fg_bg)
-{
+extern Truecolor hsv_to_rgb(float h, float s, float v, uint32_t fg_bg){
     return fhsv2rgb(h, s, v, fg_bg); 
 }
 
-extern void
-print_hsv(float h, float s, float v, uint32_t fg_bg, char* string)
-{
+extern void print_hsv(float h, float s, float v, uint32_t fg_bg, char* string) {
     Truecolor result;
     result = fhsv2rgb(h, s, v, fg_bg); 
     printf(truecolor_fmt, UNPACK_COLOR(result));
     printf("%s", string);
 }
 
-extern void
-print_gradient(float h, float s, float v, float hb, float sb, float vb, 
-        char* string)
-{
+extern void print_gradient(float h, float s, float v, float hb, float sb, float vb, char* string){
     int len = strlen(string);
     float step = 1.0 / (len - 1);
     Truecolor result;
@@ -76,28 +68,27 @@ print_gradient(float h, float s, float v, float hb, float sb, float vb,
     printf("\e[0m\n");
 }
 
-    inline Truecolor
-hsv2rgb(HSV hsv, uint32_t fg_bg)
-{ return fhsv2rgb(hsv[0], hsv[1], hsv[2], fg_bg); }
+inline Truecolor hsv2rgb(HSV hsv, uint32_t fg_bg){
+    return fhsv2rgb(hsv[0], hsv[1], hsv[2], fg_bg);
+    }
 
-inline Truecolor
-fhsv2rgb_fg(float h, float s, float v)
-{ return fhsv2rgb(h,s,v,0); }
+inline Truecolor fhsv2rgb_fg(float h, float s, float v){
+    return fhsv2rgb(h,s,v,0);
+}
 
-inline Truecolor
-fhsv2rgb_bg(float h, float s, float v)
-{ return fhsv2rgb(h,s,v,1); }
+inline Truecolor fhsv2rgb_bg(float h, float s, float v){
+    return fhsv2rgb(h,s,v,1);
+}
 
-inline Truecolor
-hsv2rgb_fg(HSV hsv)
-{ return fhsv2rgb(hsv[0], hsv[1], hsv[2], 0); }
+inline Truecolor hsv2rgb_fg(HSV hsv){
+    return fhsv2rgb(hsv[0], hsv[1], hsv[2], 0);
+}
 
-inline Truecolor
-hsv2rgb_bg(HSV hsv)
-{ return fhsv2rgb(hsv[0], hsv[1], hsv[2], 1); }
+inline Truecolor hsv2rgb_bg(HSV hsv){
+return fhsv2rgb(hsv[0], hsv[1], hsv[2], 1);
+}
 
-inline Truecolor
-fhsl2rgb(float h, float s, float l, uint32_t fg_bg) {
+inline Truecolor fhsl2rgb(float h, float s, float l, uint32_t fg_bg) {
     s = fmax(0.f, fmin(s, 1.f));
     l = fmax(0.f, fmin(l, 1.f));
     
@@ -133,24 +124,24 @@ fhsl2rgb(float h, float s, float l, uint32_t fg_bg) {
 	return rgb;
 }
 
-inline Truecolor
-fhsl2rgb_fg(float h, float s, float l)
-{ return fhsl2rgb(h,s,l,0); }
+inline Truecolor fhsl2rgb_fg(float h, float s, float l){
+    return fhsl2rgb(h,s,l,0);
+}
 
-inline Truecolor
-fhsl2rgb_bg(float h, float s, float l)
-{ return fhsl2rgb(h,s,l,1); }
+inline Truecolor fhsl2rgb_bg(float h, float s, float l){
+    return fhsl2rgb(h,s,l,1);
+}
 
-inline Truecolor
-hsl2rgb(HSL hsl, uint32_t fg_bg)
-{ return fhsl2rgb(hsl[0], hsl[1], hsl[2], fg_bg); }
+inline Truecolor hsl2rgb(HSL hsl, uint32_t fg_bg){
+    return fhsl2rgb(hsl[0], hsl[1], hsl[2], fg_bg);
+}
 
-inline Truecolor
-hsl2rgb_fg(HSL hsl)
-{ return fhsl2rgb(hsl[0], hsl[1], hsl[2], 0); }
+inline Truecolor hsl2rgb_fg(HSL hsl){
+    return fhsl2rgb(hsl[0], hsl[1], hsl[2], 0);
+}
 
-inline Truecolor
-hsl2rgb_bg(HSL hsl)
-{ return fhsl2rgb(hsl[0], hsl[1], hsl[2], 1); }
+inline Truecolor hsl2rgb_bg(HSL hsl){
+return fhsl2rgb(hsl[0], hsl[1], hsl[2], 1);
+}
 
 

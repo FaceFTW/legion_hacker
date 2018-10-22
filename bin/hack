@@ -152,10 +152,29 @@ def do_hack(chosentarget)
         type 'CRACK PASSWORD && OVERRIDE ALL SECURITY', 14, 0.08, 0.2
         sleep 0.25
 
-        # Move to Next Step
-        select_hack chosentarget, false
+        # Simulate connecting to the target via screen glitches
+        alien_language 20
 
-    # If No
+        stra = (1..$lines).map { |i| EscSequence.line(i) << EscSequence.kill }
+        .split(/\n/).each.with_index { |s, i| stra[i] << s }
+
+        #Create an fake IP Address
+        address = (0..3).map { |_i| rand(255) } * '.'
+
+        stra[10] << @green.to_s << 'ACCESS GRANTED'.center(50)
+        stra[11] << @normal.to_s <<
+		        "Connected to #{target} at #{address}".center(50) <<
+		        @green
+
+        print @green
+        stra.shuffle.each do |s|
+	        print s
+	        sleep 0.035
+        end
+        # Move to Next Step
+        select_hack chosentarget, false, address
+
+        # If No
     else
         # Return to Select Target Menu
         select_target
@@ -163,7 +182,7 @@ def do_hack(chosentarget)
 end
 
 # Hack Selection Screen
-def select_hack(_chosentarget, _recordsdownloaded)
+def select_hack(_chosentarget, _recordsdownloaded, _address)
     # Pick your Poison
     @hack = prompt.select('CHOOSE OPTION') do |hackmenu|
         hackmenu.choice 'Scan and Download Records', 1
@@ -179,19 +198,19 @@ def select_hack(_chosentarget, _recordsdownloaded)
     # Which one did you choose?
     case @hack
     when 1
-        get_records _chosentarget, _recordsdownloaded
+        get_records _chosentarget, _recordsdownloaded, _address
     when 2
-        analyze_records _chosentarget, _recordsdownloaded
+        analyze_records _chosentarget, _recordsdownloaded, _address
     when 3
-        get_infrastructure _chosentarget, _recordsdownloaded
+        get_infrastructure _chosentarget, _recordsdownloaded, _address
     when 4
-        disrupt_infrastructure _chosentarget, _recordsdownloaded
+        disrupt_infrastructure _chosentarget, _recordsdownloaded, _address
     when 5
-        do_exploit _chosentarget, _recordsdownloaded
+        do_exploit _chosentarget, _recordsdownloaded, _address
     when 6
-        upload_malware _chosentarget, _recordsdownloaded
+        upload_malware _chosentarget, _recordsdownloaded, _address
     when 7
-        remove_trace _chosentarget, _recordsdownloaded
+        remove_trace _chosentarget, _recordsdownloaded, _address
     when 8
         disconnect _chosentarget
 
@@ -203,7 +222,7 @@ end
 # ---------------------
 
 # Scan and Download Records
-def get_records(chosentarget, isdownloaded)
+def get_records(chosentarget, isdownloaded, address)
     # Generate a reasonably large random number
     @numrecords = Random.rand(10_000...10_000_000)
 
@@ -221,11 +240,11 @@ def get_records(chosentarget, isdownloaded)
     progress 'Updating existing records', 'Update Complete' if isdownloaded
 
     # Return to Hack Selection
-    select_hack chosentarget, isdownloaded
+    select_hack chosentarget, isdownloaded, address
 end
 
 # Analyze Records
-def analyze_records(chosentarget, isdownloaded)
+def analyze_records(chosentarget, isdownloaded, address)
     # If records don't exist, how can we analyze them? ( ͡° ͜ʖ ͡°)
     if isdownloaded
         progress "Analyzing records from #{chosentarget}", "#{chosentarget} records analyzed"
@@ -233,31 +252,43 @@ def analyze_records(chosentarget, isdownloaded)
         type 'No records have been found', 14, 0.08, 0.2
     end
 
-    select_hack chosentarget, isdownloaded
+    select_hack chosentarget, isdownloaded, address
 end
 
 # Get Infrastructure Report
-def get_infrastructure(chosentarget, isdownloaded)
-    # even more skeleton bois
+def get_infrastructure(chosentarget, isdownloaded, address)
+    # ---------------------
+    # Get ready for funky math
+    # ---------------------
+
+    # Generate a random number of computers (Max 100000 seems legit)
+    numcomp = Random.rand(10_000..99_999)
+
+    # Split a random portion of the computers (At least 50%) for Windows users
+    percentwindows = Random.rand(50..99) * 0.01
+    numwindows = numcomp * percentwindows
+
+    # Get the remaining percentage and distribute for Mac and Linux [The Master Race of course]
+    percentmac = percentwindows
 end
 
 # Cause Service Disruption
-def disrupt_infrastructure(chosentarget, isdownloaded)
+def disrupt_infrastructure(chosentarget, isdownloaded, address)
     # spooky scary skeletons
 end
 
 # Perform Exploit
-def do_exploit(chosentarget, isdownloaded)
+def do_exploit(chosentarget, isdownloaded, address)
     # running out of skeleton puns
 end
 
 # Upload Malicious Software
-def upload_malware(chosentarget, isdownloaded)
+def upload_malware(chosentarget, isdownloaded, address)
     # this method needs some C A L C I U M
 end
 
 # Delete Evidence
-def remove_trace(chosentarget, isdownloaded)
+def remove_trace(chosentarget, isdownloaded, address)
     # the penultimate skeleton
 end
 
@@ -275,23 +306,6 @@ progress 'LOADING', 'READY'
 
 # Transferred all code to methods up to here
 
-alien_language 20
-
-stra = (1..$lines).map { |i| EscSequence.line(i) << EscSequence.kill }
-cia_banner.split(/\n/).each.with_index { |s, i| stra[i] << s }
-
-address = (0..3).map { |_i| rand(255) } * '.'
-
-stra[10] << @green.to_s << 'ACCESS GRANTED'.center(50)
-stra[11] << @normal.to_s <<
-    "Connected to #{target} at #{address}".center(50) <<
-    @green
-
-print @green
-stra.shuffle.each do |s|
-    print s
-    sleep 0.035
-end
 
 cursor :line, 14
 type 'SCAN DATABASE && DOWNLOAD RECORDS'
