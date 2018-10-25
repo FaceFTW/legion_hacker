@@ -237,6 +237,7 @@ def get_records(chosentarget, isdownloaded, address)
     progress 'Downloading records', 'Download complete.'
 
     # Update if previous records exist
+    cursor :line, 10
     progress 'Updating existing records', 'Update Complete' if isdownloaded
 
     # Return to Hack Selection
@@ -247,6 +248,7 @@ end
 def analyze_records(chosentarget, isdownloaded, address)
     # If records don't exist, how can we analyze them? ( ͡° ͜ʖ ͡°)
     if isdownloaded
+        cursor :line, 10
         progress "Analyzing records from #{chosentarget}", "#{chosentarget} records analyzed"
     else
         type 'No records have been found', 14, 0.08, 0.2
@@ -269,7 +271,20 @@ def get_infrastructure(_chosentarget, _isdownloaded, _address)
     numwindows = numcomp * percentwindows
 
     # Get the remaining percentage and distribute for Mac and Linux [The Master Race of course]
-    percentmac = percentwindows
+    percentmac = Random.rand(0...(1 - percentwindows))
+		percentlinux = percentwindows-percentmac
+		nummac = numcomp * percentmac
+		numlinux = numcomp * percentlinux
+
+		# Now for some gui stuff
+    progress "Scanning Network", "Network Fully Scanned"
+    sleep 50
+    progress
+
+    #Psuedocode
+    # create a new thread
+    # -- this thread does
+
 end
 
 # Cause Service Disruption
