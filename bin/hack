@@ -9,6 +9,10 @@ include EscSequence
 
 require 'figlet'
 require 'tty-prompt'
+require 'tty-pie_chart'
+require 'tty-spinner'
+require 'ruby-progressbar'
+
 
 font = Figlet::Font.new(root_path + 'data/fonts/big.flf')
 figlet = Figlet::Typesetter.new(font)
