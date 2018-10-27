@@ -13,14 +13,13 @@ require 'tty-pie_chart'
 require 'tty-spinner'
 require 'ruby-progressbar'
 
-
 font = Figlet::Font.new(root_path + 'data/fonts/big.flf')
 figlet = Figlet::Typesetter.new(font)
 prompt = TTY::Prompt.new
 
-# ---------------------
+# ---------------------------------------------------------------
 # Banner Definitions
-# ---------------------
+# ---------------------------------------------------------------
 print @green
 banner = figlet['LEGION  HACKER'] + "\n" * 5
 cia_banner = figlet['   C   I   A'] + "\n" * 5
@@ -109,9 +108,9 @@ def clear_lines
     cursor :line, 10
 end
 
-# ---------------------
+# ---------------------------------------------------------------
 # Menu Functions
-# ---------------------
+# ---------------------------------------------------------------
 
 # Target Selection Menu
 def select_target
@@ -123,7 +122,7 @@ def select_target
     end
 
     # Return Based on Target
-    case targetnum
+    case @targetnum
     when 1
         return 'CIA'
     when 2
@@ -176,7 +175,7 @@ def do_hack(chosentarget)
             sleep 0.035
         end
         # Move to Next Step
-        select_hack chosentarget, false, address
+        select_hack chosentarget, false, address, false
 
         # If No
     else
@@ -186,47 +185,41 @@ def do_hack(chosentarget)
 end
 
 # Hack Selection Screen
-def select_hack(_chosentarget, _recordsdownloaded, _address)
+def select_hack(_chosentarget, _recordsdownloaded, _address, _haveaccess)
     # Pick your Poison
     @hack = prompt.select('CHOOSE OPTION') do |hackmenu|
         hackmenu.choice 'Scan and Download Records', 1
         hackmenu.choice 'Analyze Downloaded Records', 2
-        hackmenu.choice 'Get Infrastructure Report', 3
-        hackmenu.choice 'Cause Service Disruption', 4
-        hackmenu.choice 'Perform Exploit', 5
-        hackmenu.choice 'Upload Malicious Software', 6
-        hackmenu.choice 'Delete Evidence', 7
-        hackmenu.choice 'Disconnect', 8
+        hackmenu.choice 'Gain Infrastructure Access', 3
+        hackmenu.choice 'Upload Malicious Software', 4
+        hackmenu.choice 'Delete Evidence', 5
+        hackmenu.choice 'Disconnect', 6
     end
 
     # Which one did you choose?
     case @hack
     when 1
-        get_records _chosentarget, _recordsdownloaded, _address
+        get_records _chosentarget, _recordsdownloaded, _address, _haveaccess
     when 2
-        analyze_records _chosentarget, _recordsdownloaded, _address
+        analyze_records _chosentarget, _recordsdownloaded, _address, _haveaccess
     when 3
-        get_infrastructure _chosentarget, _recordsdownloaded, _address
+        get_infrastructure _chosentarget, _recordsdownloaded, _address, _haveaccess
     when 4
-        disrupt_infrastructure _chosentarget, _recordsdownloaded, _address
+        upload_malware _chosentarget, _recordsdownloaded, _address, _haveaccess
     when 5
-        do_exploit _chosentarget, _recordsdownloaded, _address
+        remove_trace _chosentarget, _recordsdownloaded, _address, _haveaccess
     when 6
-        upload_malware _chosentarget, _recordsdownloaded, _address
-    when 7
-        remove_trace _chosentarget, _recordsdownloaded, _address
-    when 8
         disconnect _chosentarget
 
     end
 end
 
-# ---------------------
+# ---------------------------------------------------------------
 # Hack Methods
-# ---------------------
+# ---------------------------------------------------------------
 
 # Scan and Download Records
-def get_records(chosentarget, isdownloaded, address)
+def get_records(chosentarget, isdownloaded, address, haveaccess )
     # Generate a reasonably large random number
     @numrecords = Random.rand(10_000...10_000_000)
 
@@ -245,12 +238,12 @@ def get_records(chosentarget, isdownloaded, address)
     progress 'Updating existing records', 'Update Complete' if isdownloaded
 
     # Return to Hack Selection
-    select_hack chosentarget, isdownloaded, address
+    select_hack chosentarget, isdownloaded, address, haveaccess
 end
 
 # Analyze Records
-def analyze_records(chosentarget, isdownloaded, address)
-    # If records don't exist, how can we analyze them? ( ͡° ͜ʖ ͡°)
+def analyze_records(chosentarget, isdownloaded, address, haveaccess )
+    # If records don't exist, how can we analyze them?
     if isdownloaded
         cursor :line, 10
         progress "Analyzing records from #{chosentarget}", "#{chosentarget} records analyzed"
@@ -258,14 +251,42 @@ def analyze_records(chosentarget, isdownloaded, address)
         type 'No records have been found', 14, 0.08, 0.2
     end
 
-    select_hack chosentarget, isdownloaded, address
+    select_hack chosentarget, isdownloaded, address, haveaccess
 end
 
+# ---------------------------------------------------------------
+# A relatively important explanation about this section
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Basically all the hack functions and the select action menu
+# use four parameters, 'chosentarget', 'isdownloaded', 'address',
+# and 'haveaccess'.
+#
+# the purpose of get_infrastructure() is to act as a simulation
+# of scanning the target network for attack points, which would
+# require a fifth parameter to be passed throughout all the
+# functions.
+#
+# Although this program is not designed to be efficient, it makes
+# logical sense to streamline program flow and prevent unnecessary
+# flow throughout the program.
+#
+# When called, get_infrastructure() will run and generate data.
+# This will be passed on to do_exploit(), which will parse and
+# alter the different "exploits" usable to gain access.
+#
+# do_exploit() will essentially call the respective method that
+# performs the exploit chosen by the user, and then will change
+# 'haveaccess' to true or false based on the exploit's return
+# value (This simulates the efficaicy for some exploits, such the
+# iOS 11.3.1 multipath_tcp bug that has variable success rate)
+# ---------------------------------------------------------------
+
+
 # Get Infrastructure Report
-def get_infrastructure(_chosentarget, _isdownloaded, _address)
-    # ---------------------
+def get_infrastructure(chosentarget, isdownloaded, address, haveaccess)
+    # ---------------------------------------------------------------
     # Get ready for funky math
-    # ---------------------
+    # ---------------------------------------------------------------
 
     # Generate a random number of computers (Max 100000 seems legit)
     numcomp = Random.rand(10_000..99_999)
@@ -276,38 +297,46 @@ def get_infrastructure(_chosentarget, _isdownloaded, _address)
 
     # Get the remaining percentage and distribute for Mac and Linux [The Master Race of course]
     percentmac = Random.rand(0...(1 - percentwindows))
-		percentlinux = percentwindows-percentmac
-		nummac = numcomp * percentmac
-		numlinux = numcomp * percentlinux
+    percentlinux = percentwindows - percentmac
+    nummac = numcomp * percentmac
+    numlinux = numcomp * percentlinux
 
-		# Now for some gui stuff
-    progress "Scanning Network", "Network Fully Scanned"
+    # Might as well add an 'other' category
+    percentother = Random.rand(0...percentlinux)
+    numother = numcomp * percentother
+
+    # Now for some gui stuff
+    progress 'Scanning Network', 'Network Fully Scanned'
     sleep 50
-    progress
+    progress 'Identifying Computers', 'All Nodes Identified'
+    sleep 50
 
-    #Psuedocode
-    # create a new thread
-    # -- this thread does
+    # Create the data array based off of the numbers
+    base_data = [{ name: 'Windows', value: numwindows, color: :bright_cyan, fill: '#' },
+                 { name: 'MacOS', value: nummac, color: :white, fill: '@' },
+                 { name: 'Linux', value: numlinux, color: :bright_yellow, fill: 'x' },
+                 { name: 'Other', value: numother, color: :bright_green, fill: 'o' }]
 
-end
+    # Display the piechart
+    cursor :line, 10
+    base_pie = TTY::PieChart.new(data: base_data, radius: 2)
 
-# Cause Service Disruption
-def disrupt_infrastructure(chosentarget, isdownloaded, address)
-    # spooky scary skeletons
+    # We'll Add more stuff later
+    do_exploit chosentarget, isdownloaded, address, haveaccess, base_data
 end
 
 # Perform Exploit
-def do_exploit(chosentarget, isdownloaded, address)
+def do_exploit(chosentarget, isdownloaded, address, haveaccess, infrastructure)
     # running out of skeleton puns
 end
 
 # Upload Malicious Software
-def upload_malware(chosentarget, isdownloaded, address)
+def upload_malware(chosentarget, isdownloaded, address, haveaccess )
     # this method needs some C A L C I U M
 end
 
 # Delete Evidence
-def remove_trace(chosentarget, isdownloaded, address)
+def remove_trace(chosentarget, isdownloaded, address, haveaccess )
     # the penultimate skeleton
 end
 
